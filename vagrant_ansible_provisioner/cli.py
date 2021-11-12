@@ -13,13 +13,11 @@ DEFAULT_COMMANDS = [ApplyCommand(), ListCommand()]
 
 
 class Cli:
-    config: EnvironmentConfig
-
-    def __init__(self, config: EnvironmentConfig) -> None:
-        self.config = config
-
     def _description(self) -> str:
         return "Vagrant Ansible Provisioner"
+
+    def _get_configuration(self) -> EnvironmentConfig:
+        return EnvironmentConfig.from_current_dir()
 
     def _get_known_commands(self) -> List[Command]:
         return DEFAULT_COMMANDS
@@ -54,9 +52,10 @@ class Cli:
         return parser
 
     @classmethod
-    def from_args_with_config(cls, config: EnvironmentConfig, args: Optional[Sequence[str]] = None) -> int:
-        cli = cls(config=config)
+    def from_args(cls, args: Optional[Sequence[str]] = None) -> int:
+        cli = cls()
         parser = cli._create_parser()
+        config = cli._get_configuration()
         parsed_args = parser.parse_args(args)
 
         command = parsed_args.command
@@ -66,7 +65,7 @@ class Cli:
         if command is not None:
             for known_command in cli._get_known_commands():
                 if command == known_command.name:
-                    return known_command.execute(verbosity, envs, cli.config, parsed_args)
+                    return known_command.execute(verbosity, envs, config, parsed_args)
 
             # Unknown command
             print(f"Unimplemented command '{command}'.", file=sys.stderr)
@@ -76,10 +75,6 @@ class Cli:
             # Command is missing
             parser.print_help()
             return 1
-
-    @classmethod
-    def from_args(cls, args: Optional[Sequence[str]] = None) -> int:
-        return cls.from_args_with_config(EnvironmentConfig.from_current_dir(), args)
 
 
 def run():
