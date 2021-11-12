@@ -1,0 +1,16 @@
+
+name: "Prepare Python environment"
+description: "Prepare Python environment"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - uses: extractions/setup-just@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - run: |
+        pip install pipenv
+        pipenv sync --dev

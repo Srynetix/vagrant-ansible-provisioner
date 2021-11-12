@@ -1,0 +1,9 @@
+---
+- name: Show date
+  shell: date
+
+- name: Show uptime
+  shell: uptime
+
+- name: Show uname
+  shell: uname -a
