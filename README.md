@@ -1,5 +1,7 @@
 # vagrant-ansible-provisioner
 
+[![Checks](https://github.com/Srynetix/vagrant-ansible-provisioner/actions/workflows/checks.yml/badge.svg)](https://github.com/Srynetix/vagrant-ansible-provisioner/actions/workflows/checks.yml)
+[![Coverage Status](https://coveralls.io/repos/github/Srynetix/vagrant-ansible-provisioner/badge.svg)](https://coveralls.io/github/Srynetix/vagrant-ansible-provisioner)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Parametrable Ansible provisioner to use with a Vagrant box.
