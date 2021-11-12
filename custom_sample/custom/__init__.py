@@ -1,14 +1,14 @@
-from argparse import _SubParsersAction, ArgumentParser, Namespace
 import sys
+from argparse import ArgumentParser, Namespace, _SubParsersAction
 from typing import List
 
-from colorama import Fore
+from termcolor import cprint
 
 from vagrant_ansible_provisioner.cli import DEFAULT_COMMANDS, Cli
 from vagrant_ansible_provisioner.command import Command
 from vagrant_ansible_provisioner.config import EnvironmentConfig
-from vagrant_ansible_provisioner.utils import exec_or_bail, print_step
 from vagrant_ansible_provisioner.role import apply_role_from_config
+from vagrant_ansible_provisioner.utils import exec_or_bail, print_step
 
 
 class InitializeCommand(Command):
@@ -21,7 +21,7 @@ class InitializeCommand(Command):
         print_step("Applying roles")
         apply_role_from_config(config, "test.role1", as_root=False, verbosity=verbosity, envs=envs)
 
-        print(Fore.GREEN + "\n✅ Environment is now ready. You can connect to your machine using SSH." + Fore.RESET)
+        cprint("\n✅ Environment is now ready. You can connect to your machine using SSH.", color="green")
         return 0
 
 

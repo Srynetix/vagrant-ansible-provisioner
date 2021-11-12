@@ -15,3 +15,5 @@ runs:
         pip install pipenv
         pipenv sync --dev
       shell: bash
+      env:
+        PIPENV_VENV_IN_PROJECT: enabled
