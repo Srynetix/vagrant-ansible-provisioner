@@ -17,4 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: ./.github/actions/prepare
-    - run: just test
+    - run: just test-cov-ci
+    - uses: AndreMiras/coveralls-python-action@develop
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: coverage.xml
