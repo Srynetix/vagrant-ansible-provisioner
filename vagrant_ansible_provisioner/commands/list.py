@@ -1,4 +1,4 @@
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace, _SubParsersAction
 from typing import List
 
 from vagrant_ansible_provisioner.command import Command
@@ -18,3 +18,7 @@ class ListCommand(Command):
             for role in roles:
                 print(f" * {role}")
         return 0
+
+    @staticmethod
+    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+        subp.add_parser("list", help="list Ansible roles")

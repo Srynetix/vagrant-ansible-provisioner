@@ -1,4 +1,6 @@
 import os
+import shlex
+import subprocess
 import sys
 
 from termcolor import colored as _colored
@@ -16,6 +18,12 @@ def exec_or_bail(cmd: str, *, verbose: bool = False):
     code = os.system(cmd)
     if code != 0:
         bail()
+
+
+def exec_output(cmd: str, *, verbose: bool = False) -> bytes:
+    if verbose:
+        cprint(f"⚙️  Executing command '{cmd}' ...\n", color="blue")
+    return subprocess.check_output(shlex.split(cmd))
 
 
 def yes_no_prompt(msg: str) -> bool:

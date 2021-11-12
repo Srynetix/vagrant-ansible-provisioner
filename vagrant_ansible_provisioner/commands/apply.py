@@ -1,5 +1,5 @@
 import sys
-from argparse import Namespace
+from argparse import ArgumentParser, Namespace, _SubParsersAction
 from typing import List
 
 from vagrant_ansible_provisioner.command import Command
@@ -31,3 +31,9 @@ class ApplyCommand(Command):
             envs=envs,
         )
         return 0
+
+    @staticmethod
+    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+        apply_cmd = subp.add_parser("apply", help="apply Ansible role")
+        apply_cmd.add_argument("role", help="role name (from ./playbook/roles)")
+        apply_cmd.add_argument("-e", "--env", action="append", help="set environment value (eg. VAR=1)")

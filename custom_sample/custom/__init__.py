@@ -1,6 +1,6 @@
 import sys
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
+from typing import List, Type
 
 from termcolor import cprint
 
@@ -24,19 +24,20 @@ class InitializeCommand(Command):
         cprint("\n✅ Environment is now ready. You can connect to your machine using SSH.", color="green")
         return 0
 
+    @staticmethod
+    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+        subp.add_parser("initialize", help="initialize environment")
+
 
 class LocalCli(Cli):
     def _description(self) -> str:
         return "Custom Sample Cli"
 
-    def _get_known_commands(self) -> List[Command]:
+    def _get_known_commands(self) -> List[Type[Command]]:
         return [
-            InitializeCommand(),
+            InitializeCommand,
             *DEFAULT_COMMANDS,
         ]
-
-    def _create_extra_subcommands(self, parser: ArgumentParser, subp: _SubParsersAction) -> None:
-        subp.add_parser("initialize", help="initialize environment")
 
 
 def run():
