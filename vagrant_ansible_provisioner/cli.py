@@ -12,24 +12,17 @@ from .version import __version__
 DEFAULT_COMMANDS = [ApplyCommand(), ListCommand()]
 
 
-class CliConfig:
-    environment_config: EnvironmentConfig
-    known_commands: List[Command]
-
-    def __init__(self, *, environment_config: EnvironmentConfig = None, known_commands: List[Command] = None) -> None:
-        if environment_config is None:
-            environment_config = EnvironmentConfig.from_current_dir()
-        self.environment_config = environment_config
-        self.known_commands = known_commands or DEFAULT_COMMANDS
-
-
 class Cli:
-    config: CliConfig
+    config: EnvironmentConfig
 
-    def __init__(self, config: CliConfig = None) -> None:
-        if config is None:
-            config = CliConfig()
+    def __init__(self, config: EnvironmentConfig) -> None:
         self.config = config
+
+    def _description(self) -> str:
+        return "Vagrant Ansible Provisioner"
+
+    def _get_known_commands(self) -> List[Command]:
+        return DEFAULT_COMMANDS
 
     def _create_subcommands(self, parser: ArgumentParser) -> None:
         subp = parser.add_subparsers(dest="command")
@@ -50,7 +43,7 @@ class Cli:
         pass
 
     def _create_parser(self) -> ArgumentParser:
-        parser = ArgumentParser(description="Vagrant Ansible Provisioner")
+        parser = ArgumentParser(description=self._description())
         self._create_subcommands(parser)
 
         parser.add_argument(
@@ -61,19 +54,19 @@ class Cli:
         return parser
 
     @classmethod
-    def from_args_with_config(cls, config: CliConfig, args: Optional[Sequence[str]] = None) -> int:
-        cli = cls()
+    def from_args_with_config(cls, config: EnvironmentConfig, args: Optional[Sequence[str]] = None) -> int:
+        cli = cls(config=config)
         parser = cli._create_parser()
         parsed_args = parser.parse_args(args)
 
         command = parsed_args.command
         verbosity = min(parsed_args.verbose, 3)
-        envs = getattr(parsed_args, "env", [])
+        envs = getattr(parsed_args, "env", None) or []
 
         if command is not None:
-            for known_command in cli.config.known_commands:
+            for known_command in cli._get_known_commands():
                 if command == known_command.name:
-                    return known_command.execute(verbosity, envs, cli.config.environment_config, parsed_args)
+                    return known_command.execute(verbosity, envs, cli.config, parsed_args)
 
             # Unknown command
             print(f"Unimplemented command '{command}'.", file=sys.stderr)
@@ -86,7 +79,7 @@ class Cli:
 
     @classmethod
     def from_args(cls, args: Optional[Sequence[str]] = None) -> int:
-        return cls.from_args_with_config(CliConfig(), args)
+        return cls.from_args_with_config(EnvironmentConfig.from_current_dir(), args)
 
 
 def run():

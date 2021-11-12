@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+termcolor = "*"
 
 [dev-packages]
 black = "*"
@@ -14,6 +15,7 @@ flake8-black = "*"
 mypy = "*"
 pytest = "*"
 pytest-cov = "*"
+types-termcolor = "*"
 
 [requires]
 python_version = "3.9"

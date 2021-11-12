@@ -7,10 +7,10 @@ lint:
 	pipenv run mypy .
 
 test:
-	pipenv run python -m pytest -v tests
+	pipenv run python -m pytest -vv tests
 
 test-cov:
-	pipenv run python -m pytest -v tests --cov --cov-report=html
+	pipenv run python -m pytest -vv tests --cov --cov-report=html
 
 install-dev:
 	pip install -e .

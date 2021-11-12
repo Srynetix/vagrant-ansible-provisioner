@@ -1,15 +1,18 @@
 import os
 import sys
 
+from termcolor import colored as _colored
+from termcolor import cprint as _cprint
+
 
 def bail():
-    print("")
-    print("=> Exiting")
-    print("")
+    cprint("❌ Abort.", color="red", file=sys.stderr)
     sys.exit(1)
 
 
-def exec_or_bail(cmd: str):
+def exec_or_bail(cmd: str, *, verbose: bool = False):
+    if verbose:
+        cprint(f"⚙️  Executing command '{cmd}' ...\n", color="blue")
     code = os.system(cmd)
     if code != 0:
         bail()
@@ -17,7 +20,7 @@ def exec_or_bail(cmd: str):
 
 def yes_no_prompt(msg: str) -> bool:
     while True:
-        choice = input("/!\\ {m} (y/n) ".format(m=msg))
+        choice = input(colored("❔ {m} (y/n) ".format(m=msg), color="blue"))
 
         try:
             if choice.lower() == "y":
@@ -32,23 +35,30 @@ def clear_screen():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def exec_and_quit(msg: str, cmd: str):
+def exec_and_quit(msg: str, cmd: str, *, verbose: bool = False):
     print(msg)
-    exec_or_bail(cmd)
+    exec_or_bail(cmd, verbose=verbose)
 
-    print("")
-    print("=> Success")
-    print("")
+    cprint("✅ Success.", color="green")
+    sys.exit(0)
 
 
 def print_step(txt: str):
     print("")
-    print("=" * (len(txt) + 2))
-    print(f" {txt}")
-    print("=" * (len(txt) + 2))
+    cprint("=" * (len(txt) + 5), color="blue")
+    cprint(f" 🚀 {txt}", color="blue")
+    cprint("=" * (len(txt) + 5), color="blue")
     print("")
 
 
 def print_task(txt: str, newline: bool = False):
     print("")
-    print(f"> {txt} ", end="\n" if newline else "")
+    cprint(f"📜 {txt} ", color="blue", end="\n" if newline else "")
+
+
+def cprint(text: str, color: str, **kwargs):
+    _cprint(text, color=color, **kwargs)
+
+
+def colored(text: str, color: str):
+    return _colored(text, color=color)
