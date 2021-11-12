@@ -1,0 +1,26 @@
+name: Checks
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/prepare
+    - run: just lint
+
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./.github/actions/prepare
+    - run: just test-cov-ci
+    - uses: AndreMiras/coveralls-python-action@develop
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: pytest.xml
