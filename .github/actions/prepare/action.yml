@@ -14,3 +14,4 @@ runs:
     - run: |
         pip install pipenv
         pipenv sync --dev
+      shell: bash
