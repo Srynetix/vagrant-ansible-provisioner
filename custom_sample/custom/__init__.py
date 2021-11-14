@@ -1,6 +1,6 @@
 import sys
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
+from typing import List, Type
 
 from termcolor import cprint
 
@@ -14,30 +14,40 @@ from vagrant_ansible_provisioner.utils import exec_or_bail, print_step
 class InitializeCommand(Command):
     name = "initialize"
 
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
+        build_mode: bool = args.build
+        verbosity = config.verbosity.getv()
         print_step("Starting VM")
-        exec_or_bail("vagrant up", verbose=verbosity > 0)
+        exec_or_bail("vagrant up", verbose=verbosity > 0, env={"BUILD_MODE": str(build_mode or "")})
 
         print_step("Applying roles")
-        apply_role_from_config(config, "test.role1", as_root=False, verbosity=verbosity, envs=envs)
+        apply_role_from_config(config, "test.role1")
 
         cprint("\n✅ Environment is now ready. You can connect to your machine using SSH.", color="green")
         return 0
+
+    @staticmethod
+    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+        cmd = subp.add_parser("initialize", help="initialize environment")
+        cmd.add_argument("--build", action="store_true", help="build from base box")
 
 
 class LocalCli(Cli):
     def _description(self) -> str:
         return "Custom Sample Cli"
 
-    def _get_known_commands(self) -> List[Command]:
+    def _get_prog_name(self) -> str:
+        return "custom"
+
+    def _get_version(self) -> str:
+        return "1.2.3"
+
+    def _get_known_commands(self) -> List[Type[Command]]:
         return [
-            InitializeCommand(),
+            InitializeCommand,
             *DEFAULT_COMMANDS,
         ]
 
-    def _create_extra_subcommands(self, parser: ArgumentParser, subp: _SubParsersAction) -> None:
-        subp.add_parser("initialize", help="initialize environment")
 
-
-def run():
+def run() -> None:
     sys.exit(LocalCli.from_args())

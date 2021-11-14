@@ -1,3 +1,8 @@
-import setuptools
+from setuptools import setup
 
-setuptools.setup(install_requires=["termcolor"])
+setup(
+    packages=[
+        "vagrant_ansible_provisioner",
+        "vagrant_ansible_provisioner.commands",
+    ]
+)

@@ -5,7 +5,7 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def disable_colors(monkeypatch):
+def _disable_colors(monkeypatch):
     def _cprint(*args, **kwargs):
         if "color" in kwargs:
             kwargs.pop("color")
@@ -18,7 +18,7 @@ def disable_colors(monkeypatch):
     monkeypatch.setattr("vagrant_ansible_provisioner.utils._cprint", _cprint)
 
 
-@pytest.fixture
+@pytest.fixture()
 def ansible_tmpdir_with_roles(tmpdir):
     def _inner(role_list: List[str]):
         roles = tmpdir.join("roles")
@@ -30,14 +30,14 @@ def ansible_tmpdir_with_roles(tmpdir):
     return _inner
 
 
-@pytest.fixture
+@pytest.fixture()
 def ansible_tmpdir_without_roles(tmpdir):
     roles = tmpdir.join("roles")
     os.makedirs(roles)
     return tmpdir
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_and_trace_calls(monkeypatch):
     def inner(path: str, return_value: Any = None):
         calls = []
@@ -52,6 +52,6 @@ def mock_and_trace_calls(monkeypatch):
     return inner
 
 
-@pytest.fixture
+@pytest.fixture()
 def exec_or_bail_mock(mock_and_trace_calls):
     return mock_and_trace_calls("vagrant_ansible_provisioner.role.exec_or_bail")

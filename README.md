@@ -28,17 +28,10 @@ Default configuration is to have:
 Here is a sample Vagrantfile (based on an Ubuntu 20.04 box):
 
 ```ruby
-$SHELL_PROV = <<-SCRIPT
-sudo apt update
-sudo apt install python3-pip -y
-sudo python3 -m pip install ansible
-SCRIPT
-
 Vagrant.configure("2") do |config|
     config.vm.define "machine-name" do |s|
         s.vm.box = "bento/ubuntu-20.04"
-
-        s.vm.provision :shell, inline: $SHELL_PROV
+        s.vm.provision :shell, inline: "sudo apt update && sudo apt install ansible -y"
         s.vm.synced_folder "./ansible", "/ansible", mount_options: ["dmode=775,fmode=664"]
     end
 end
