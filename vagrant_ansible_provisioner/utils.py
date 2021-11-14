@@ -47,7 +47,7 @@ def yes_no_prompt(msg: str) -> bool:
 
 
 def clear_screen() -> None:
-    subprocess.call(["cls"] if os.name == "nt" else ["clear"])
+    subprocess.call(["cls"] if os.name == "nt" else ["clear"], shell=True)
 
 
 def exec_and_quit(msg: str, cmd: str, *, verbose: bool = False, env: Optional[Dict[str, Any]] = None) -> None:
