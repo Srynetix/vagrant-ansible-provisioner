@@ -1,10 +1,6 @@
-from distutils.core import setup
-
-from .vagrant_ansible_provisioner.version import __version__
+from setuptools import setup
 
 setup(
-    name="vagrant-ansible-provisioner",
-    version=__version__,
     packages=[
         "vagrant_ansible_provisioner",
         "vagrant_ansible_provisioner.commands",
