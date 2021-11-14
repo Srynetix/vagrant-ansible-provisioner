@@ -1,3 +1,3 @@
 import setuptools
 
-setuptools.setup(install_requires=["termcolor"])
+setuptools.setup()
