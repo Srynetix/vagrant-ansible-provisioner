@@ -1,5 +1,6 @@
+from vagrant_ansible_provisioner.config import EnvironmentConfig
 from vagrant_ansible_provisioner.role import (
-    apply_role,
+    apply_role_from_config,
     list_roles,
     prepare_env_value,
     validate_role,
@@ -26,12 +27,14 @@ def test_prepare_env_value():
 
 
 def test_apply_role_no_env(exec_or_bail_mock):
-    apply_role("/tmp", "one", as_root=False, verbosity=0, envs=[], internal=False)
+    config = EnvironmentConfig(ansible_role_path_guest="/tmp")
+    apply_role_from_config(config, "one", as_root=False, envs=[])
 
     assert exec_or_bail_mock.pop() == (
         (
             'vagrant ssh -c bash -c "cd /tmp '
             "&& export ANSIBLE_RETRY_FILES_ENABLED=False "
+            "&& export ANSIBLE_LIBRARY=./plugins/modules "
             "&& export ANSIBLE_ROLES_PATH=./roles "
             "&& ansible-playbook -i ./inventory /dev/stdin "
             '<<< $\'[{"hosts": "localhost", "tasks": [{"import_role": {"name": "one"}}]}]\'"'
@@ -41,12 +44,14 @@ def test_apply_role_no_env(exec_or_bail_mock):
 
 
 def test_apply_role_env(exec_or_bail_mock):
-    apply_role("/tmp", "one", as_root=False, verbosity=0, envs=["a=1", "pouet=yes"], internal=False)
+    config = EnvironmentConfig(ansible_role_path_guest="/tmp")
+    apply_role_from_config(config, "one", as_root=False, envs=["a=1", "pouet=yes"])
 
     assert exec_or_bail_mock.pop() == (
         (
             'vagrant ssh -c bash -c "cd /tmp '
             "&& export ANSIBLE_RETRY_FILES_ENABLED=False "
+            "&& export ANSIBLE_LIBRARY=./plugins/modules "
             "&& export ANSIBLE_ROLES_PATH=./roles "
             "&& ansible-playbook -i ./inventory -e a=1 -e pouet=yes /dev/stdin "
             '<<< $\'[{"hosts": "localhost", "tasks": [{"import_role": {"name": "one"}}]}]\'"'
@@ -56,12 +61,14 @@ def test_apply_role_env(exec_or_bail_mock):
 
 
 def test_apply_role_verbosity(exec_or_bail_mock):
-    apply_role("/tmp", "one", as_root=False, verbosity=3, envs=[], internal=False)
+    config = EnvironmentConfig(ansible_role_path_guest="/tmp", verbosity=3)
+    apply_role_from_config(config, "one", as_root=False, envs=[])
 
     assert exec_or_bail_mock.pop() == (
         (
             'vagrant ssh -c bash -c "cd /tmp '
             "&& export ANSIBLE_RETRY_FILES_ENABLED=False "
+            "&& export ANSIBLE_LIBRARY=./plugins/modules "
             "&& export ANSIBLE_ROLES_PATH=./roles "
             "&& ansible-playbook -vvv -i ./inventory /dev/stdin "
             '<<< $\'[{"hosts": "localhost", "tasks": [{"import_role": {"name": "one"}}]}]\'"'
@@ -71,12 +78,14 @@ def test_apply_role_verbosity(exec_or_bail_mock):
 
 
 def test_apply_role_as_root(exec_or_bail_mock):
-    apply_role("/tmp", "one", as_root=True, verbosity=0, envs=[], internal=False)
+    config = EnvironmentConfig(ansible_role_path_guest="/tmp")
+    apply_role_from_config(config, "one", as_root=True, envs=[])
 
     assert exec_or_bail_mock.pop() == (
         (
             'vagrant ssh -c sudo bash -c "cd /tmp '
             "&& export ANSIBLE_RETRY_FILES_ENABLED=False "
+            "&& export ANSIBLE_LIBRARY=./plugins/modules "
             "&& export ANSIBLE_ROLES_PATH=./roles "
             "&& ansible-playbook -i ./inventory /dev/stdin "
             '<<< $\'[{"hosts": "localhost", "tasks": [{"import_role": {"name": "one"}}]}]\'"'
@@ -86,12 +95,14 @@ def test_apply_role_as_root(exec_or_bail_mock):
 
 
 def test_apply_role_internal(exec_or_bail_mock):
-    apply_role("/tmp", "one", as_root=False, verbosity=0, envs=[], internal=True)
+    config = EnvironmentConfig(ansible_role_path_guest="/tmp", internal=True)
+    apply_role_from_config(config, "one", as_root=False, envs=[])
 
     assert exec_or_bail_mock.pop() == (
         (
             'bash -c "cd /tmp '
             "&& export ANSIBLE_RETRY_FILES_ENABLED=False "
+            "&& export ANSIBLE_LIBRARY=./plugins/modules "
             "&& export ANSIBLE_ROLES_PATH=./roles "
             "&& ansible-playbook -i ./inventory /dev/stdin "
             '<<< $\'[{"hosts": "localhost", "tasks": [{"import_role": {"name": "one"}}]}]\'"'

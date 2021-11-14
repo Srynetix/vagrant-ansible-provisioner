@@ -77,7 +77,7 @@ def test_yes_no_prompt_yes(mock_and_trace_calls):
     answer = yes_no_prompt("Question?")
 
     assert answer is True
-    assert input_calls == [("❔ Question? (y/n) ", {})]
+    assert input_calls == [("? Question? (y/n) ", {})]
 
 
 def test_yes_no_prompt_no(mock_and_trace_calls):
@@ -86,4 +86,4 @@ def test_yes_no_prompt_no(mock_and_trace_calls):
     answer = yes_no_prompt("Question?")
 
     assert answer is False
-    assert input_calls == [("❔ Question? (y/n) ", {})]
+    assert input_calls == [("? Question? (y/n) ", {})]

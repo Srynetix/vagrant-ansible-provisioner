@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
 
 from vagrant_ansible_provisioner.command import Command
 from vagrant_ansible_provisioner.config import EnvironmentConfig
@@ -9,7 +8,7 @@ from vagrant_ansible_provisioner.utils import exec_or_bail
 class InstallBoxCommand(Command):
     name = "install-box"
 
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
         box_name: str = args.name
         box_path: str = args.path
 

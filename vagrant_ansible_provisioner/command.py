@@ -1,6 +1,5 @@
 import abc
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
 
 from .config import EnvironmentConfig
 
@@ -9,7 +8,7 @@ class Command(abc.ABC):
     name: str
 
     @abc.abstractmethod
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
         """Execute command."""
 
     @staticmethod

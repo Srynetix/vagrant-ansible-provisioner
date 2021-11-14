@@ -8,5 +8,5 @@ ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7
 
 
 def reset_authorized_keys(*, verbose: bool = False):
-    cprint("⚙️ Resetting authorized_keys with vagrant insecure public key ...", color="blue")
+    cprint("⚙️  Resetting authorized_keys with vagrant insecure public key ...", color="blue")
     exec_or_bail(f"vagrant ssh -c \"echo '{INSECURE_PUBLIC_KEY}' > ~/.ssh/authorized_keys\"", verbose=verbose)

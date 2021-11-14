@@ -14,12 +14,13 @@ from vagrant_ansible_provisioner.utils import exec_or_bail, print_step
 class InitializeCommand(Command):
     name = "initialize"
 
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
+        verbosity = config.verbosity.getv()
         print_step("Starting VM")
         exec_or_bail("vagrant up", verbose=verbosity > 0)
 
         print_step("Applying roles")
-        apply_role_from_config(config, "test.role1", as_root=False, verbosity=verbosity, envs=envs)
+        apply_role_from_config(config, "test.role1")
 
         cprint("\n✅ Environment is now ready. You can connect to your machine using SSH.", color="green")
         return 0

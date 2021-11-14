@@ -1,6 +1,5 @@
 import sys
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
 
 from vagrant_ansible_provisioner.command import Command
 from vagrant_ansible_provisioner.config import EnvironmentConfig
@@ -15,11 +14,13 @@ from vagrant_ansible_provisioner.utils import cprint
 class ApplyCommand(Command):
     name = "apply"
 
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
+        envs = args.env or []
         role = args.role
-        if not validate_role(config.ansible_role_path_host, args.role):
+
+        if not validate_role(config.ansible_role_path_host.getv(), args.role):
             cprint(f"Role '{role}' does not exist.\nKnown roles:", color="red", file=sys.stderr)
-            for known_role in list_roles(config.ansible_role_path_host):
+            for known_role in list_roles(config.ansible_role_path_host.getv()):
                 cprint(f" * {known_role}", color="red", file=sys.stderr)
             return 1
 
@@ -27,7 +28,6 @@ class ApplyCommand(Command):
             config,
             role,
             as_root=False,
-            verbosity=verbosity,
             envs=envs,
         )
         return 0

@@ -28,7 +28,7 @@ def exec_output(cmd: str, *, verbose: bool = False) -> bytes:
 
 def yes_no_prompt(msg: str) -> bool:
     while True:
-        choice = input(colored("❔ {m} (y/n) ".format(m=msg), color="blue"))
+        choice = input(colored("? {m} (y/n) ".format(m=msg), color="blue"))
 
         try:
             if choice.lower() == "y":

@@ -1,5 +1,4 @@
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List
 
 from vagrant_ansible_provisioner.command import Command
 from vagrant_ansible_provisioner.config import EnvironmentConfig
@@ -10,9 +9,10 @@ from vagrant_ansible_provisioner.vagrant import reset_authorized_keys
 class PackageBoxCommand(Command):
     name = "package-box"
 
-    def execute(self, verbosity: int, envs: List[str], config: EnvironmentConfig, args: Namespace) -> int:
+    def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
         box_name: str = args.name
         box_path: str = args.path
+        verbosity = config.verbosity.getv()
         self.prepare_box(verbosity)
         self.build_box(box_name, box_path, verbosity)
         return 0

@@ -4,6 +4,7 @@ from typing import List, Optional, Sequence, Type
 
 from vagrant_ansible_provisioner.commands.install_box import InstallBoxCommand
 from vagrant_ansible_provisioner.commands.package_box import PackageBoxCommand
+from vagrant_ansible_provisioner.commands.port_forward import PortForwardCommand
 from vagrant_ansible_provisioner.config import EnvironmentConfig
 
 from .command import Command
@@ -11,7 +12,13 @@ from .commands.apply import ApplyCommand
 from .commands.list import ListCommand
 from .version import __version__
 
-DEFAULT_COMMANDS: List[Type[Command]] = [ApplyCommand, ListCommand, PackageBoxCommand, InstallBoxCommand]
+DEFAULT_COMMANDS: List[Type[Command]] = [
+    ApplyCommand,
+    ListCommand,
+    PortForwardCommand,
+    PackageBoxCommand,
+    InstallBoxCommand,
+]
 
 
 class Cli:
@@ -49,15 +56,20 @@ class Cli:
         config = cli._get_configuration()
         parsed_args = parser.parse_args(args)
 
+        # Clamp verbosity to 3
+        verbosity = config.verbosity.getv()
+        if parsed_args.verbose > 0:
+            verbosity = parsed_args.verbose
+        verbosity = min(verbosity, 3)
+        config.verbosity.setv(verbosity)
+
         command = parsed_args.command
-        verbosity = min(parsed_args.verbose, 3)
-        envs = getattr(parsed_args, "env", None) or []
 
         if command is not None:
             for known_command in known_commands:
                 if command == known_command.name:
                     cmd_instance = known_command()
-                    return cmd_instance.execute(verbosity, envs, config, parsed_args)
+                    return cmd_instance.execute(parsed_args, config)
 
             # Unknown command
             print(f"Unimplemented command '{command}'.", file=sys.stderr)
