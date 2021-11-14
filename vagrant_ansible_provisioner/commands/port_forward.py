@@ -1,4 +1,5 @@
-import os
+import shlex
+import subprocess
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 from typing import List, NamedTuple
 
@@ -33,7 +34,7 @@ class PortForwardCommand(Command):
             cprint(f"Executing command '{cmd}'", color="blue")
 
         try:
-            os.system(cmd)
+            subprocess.call(shlex.split(cmd))
         except KeyboardInterrupt:
             print("Quitting.")
         return 0

@@ -1,4 +1,3 @@
-import sys
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 
 from vagrant_ansible_provisioner.command import Command
@@ -8,7 +7,7 @@ from vagrant_ansible_provisioner.role import (
     list_roles,
     validate_role,
 )
-from vagrant_ansible_provisioner.utils import cprint
+from vagrant_ansible_provisioner.utils import print_error
 
 
 class ApplyCommand(Command):
@@ -19,9 +18,10 @@ class ApplyCommand(Command):
         role = args.role
 
         if not validate_role(config.ansible_role_path_host.getv(), args.role):
-            cprint(f"Role '{role}' does not exist.\nKnown roles:", color="red", file=sys.stderr)
+            print_error(f"Role '{role}' does not exist.")
+            print_error("Known roles:", prefix="")
             for known_role in list_roles(config.ansible_role_path_host.getv()):
-                cprint(f" * {known_role}", color="red", file=sys.stderr)
+                print_error(known_role, prefix=" *")
             return 1
 
         apply_role_from_config(

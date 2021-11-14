@@ -18,7 +18,7 @@ class EnvironmentValue(Generic[T]):
         self.fallback = fallback
         self.value = None
 
-    def setv(self, value: T):
+    def setv(self, value: T) -> None:
         self.value = value
 
     def getv(self) -> T:
@@ -35,7 +35,7 @@ class EnvironmentConfig:
     verbosity: EnvironmentValue[int]
     internal: EnvironmentValue[bool]
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.ansible_role_path_host = EnvironmentValue("ansible_role_path_host", "ansible")
         self.ansible_role_path_guest = EnvironmentValue("ansible_role_path_guest", "/ansible")
         self.ansible_library = EnvironmentValue("ansible_library", "./plugins/modules")

@@ -1,7 +1,7 @@
 import json
 import os
 from collections import OrderedDict
-from typing import Any, List
+from typing import Any, List, Optional
 
 from vagrant_ansible_provisioner.config import EnvironmentConfig
 
@@ -10,7 +10,7 @@ from .utils import cprint, exec_or_bail
 
 def list_roles(ansible_path: str) -> List[str]:
     roles_dir = os.path.join(ansible_path, "roles")
-    return sorted(list(os.listdir(roles_dir)))
+    return sorted(os.listdir(roles_dir))
 
 
 def validate_role(ansible_path: str, role: str) -> bool:
@@ -61,7 +61,7 @@ def apply_role_from_config(
     role: str,
     *,
     as_root: bool = False,
-    envs: List[str] = None,
+    envs: Optional[List[str]] = None,
 ) -> None:
     role_path = config.ansible_role_path_guest.getv()
     verbosity = config.verbosity.getv()

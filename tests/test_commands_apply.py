@@ -13,7 +13,7 @@ def test_execute_missing_role(exec_or_bail_mock, ansible_tmpdir_with_roles, caps
 
     assert len(exec_or_bail_mock) == 0
     assert out_code == 1
-    assert captured.err == ("Role 'three' does not exist.\n" "Known roles:\n" " * one\n" " * two\n")
+    assert captured.err == ("❌ Role 'three' does not exist.\n" "Known roles:\n" " * one\n" " * two\n")
 
 
 def test_execute_known_role(exec_or_bail_mock, ansible_tmpdir_with_roles, capsys):

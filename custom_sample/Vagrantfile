@@ -1,7 +1,13 @@
-Vagrant.configure("2") do |config|
-    config.vm.define "machine-name" do |s|
-        s.vm.box = "bento/ubuntu-20.04"
+$BOX = "local/custom-sample"
 
+if ENV.fetch("BUILD_MODE", "") != ""
+    puts "Build mode enabled."
+    $BOX = "bento/ubuntu-20.04"
+end
+
+Vagrant.configure("2") do |config|
+    config.vm.define "custom-sample" do |s|
+        s.vm.box = $BOX
         s.vm.provision :shell, inline: "sudo apt update && sudo apt install ansible -y"
         s.vm.synced_folder "./ansible", "/ansible", mount_options: ["dmode=775,fmode=664"]
     end

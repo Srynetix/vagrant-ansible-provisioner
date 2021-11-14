@@ -1,3 +1,4 @@
+import os
 import sys
 from argparse import ArgumentParser
 from typing import List, Optional, Sequence, Type
@@ -6,6 +7,7 @@ from vagrant_ansible_provisioner.commands.install_box import InstallBoxCommand
 from vagrant_ansible_provisioner.commands.package_box import PackageBoxCommand
 from vagrant_ansible_provisioner.commands.port_forward import PortForwardCommand
 from vagrant_ansible_provisioner.config import EnvironmentConfig
+from vagrant_ansible_provisioner.utils import print_error
 
 from .command import Command
 from .commands.apply import ApplyCommand
@@ -25,6 +27,12 @@ class Cli:
     def _description(self) -> str:
         return "Vagrant Ansible Provisioner"
 
+    def _get_prog_name(self) -> str:
+        return os.path.basename(sys.argv[0])
+
+    def _get_version(self) -> str:
+        return __version__
+
     def _get_configuration(self) -> EnvironmentConfig:
         return EnvironmentConfig.from_current_dir()
 
@@ -42,7 +50,10 @@ class Cli:
         self._create_subcommands(parser, commands)
 
         parser.add_argument(
-            "-V", "--version", action="version", version="%(prog)s {version}".format(version=__version__)
+            "-V",
+            "--version",
+            action="version",
+            version="{prog} {version}".format(prog=self._get_prog_name(), version=self._get_version()),
         )
         parser.add_argument("-v", "--verbose", action="count", help="verbosity (up to 3)", default=0)
 
@@ -72,7 +83,7 @@ class Cli:
                     return cmd_instance.execute(parsed_args, config)
 
             # Unknown command
-            print(f"Unimplemented command '{command}'.", file=sys.stderr)
+            print_error(f"Unimplemented command '{command}'.")
             return 2
 
         else:
@@ -81,5 +92,5 @@ class Cli:
             return 1
 
 
-def run():
+def run() -> None:
     sys.exit(Cli.from_args())
