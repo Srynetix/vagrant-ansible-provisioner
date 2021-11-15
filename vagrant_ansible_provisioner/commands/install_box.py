@@ -14,7 +14,7 @@ class InstallBoxCommand(Command):
         exec_or_bail(f"vagrant box add -f {box_path}")
         return 0
 
-    @staticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
         install_box_cmd = subp.add_parser("install-box", help="install a Vagrant box from JSON")
         install_box_cmd.add_argument("path", help="box JSON file path / URL")

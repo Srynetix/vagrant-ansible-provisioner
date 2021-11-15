@@ -1,11 +1,12 @@
 import sys
 from argparse import ArgumentParser, Namespace, _SubParsersAction
-from typing import List, Type
+from typing import Dict, List, Optional, Type
 
 from termcolor import cprint
 
-from vagrant_ansible_provisioner.cli import DEFAULT_COMMANDS, Cli
+from vagrant_ansible_provisioner.cli import Cli, get_default_commands
 from vagrant_ansible_provisioner.command import Command
+from vagrant_ansible_provisioner.commands.package_box import PackageBoxCommand
 from vagrant_ansible_provisioner.config import EnvironmentConfig
 from vagrant_ansible_provisioner.role import apply_role_from_config
 from vagrant_ansible_provisioner.utils import exec_or_bail, print_step
@@ -26,10 +27,22 @@ class InitializeCommand(Command):
         cprint("\n✅ Environment is now ready. You can connect to your machine using SSH.", color="green")
         return 0
 
-    @staticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
         cmd = subp.add_parser("initialize", help="initialize environment")
         cmd.add_argument("--build", action="store_true", help="build from base box")
+
+
+class CustomPackageBoxCommand(PackageBoxCommand):
+    @classmethod
+    def _get_default_package_arguments(cls) -> Dict[str, Optional[str]]:
+        args = super()._get_default_package_arguments()
+        return {
+            **args,
+            "vm-name": "custom-sample",
+            "box-name": "local/custom-sample",
+            "box-description": "Custom Sample",
+        }
 
 
 class LocalCli(Cli):
@@ -45,7 +58,8 @@ class LocalCli(Cli):
     def _get_known_commands(self) -> List[Type[Command]]:
         return [
             InitializeCommand,
-            *DEFAULT_COMMANDS,
+            CustomPackageBoxCommand,
+            *get_default_commands(without=[PackageBoxCommand]),
         ]
 
 

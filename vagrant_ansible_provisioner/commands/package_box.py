@@ -1,5 +1,10 @@
 import json
-from argparse import ArgumentParser, Namespace, _SubParsersAction
+from argparse import (
+    ArgumentDefaultsHelpFormatter,
+    ArgumentParser,
+    Namespace,
+    _SubParsersAction,
+)
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -73,13 +78,31 @@ class PackageBoxCommand(Command):
             json.dump(manifest, f, indent=4)
         print_info(f"Manifest written at path '{path}'")
 
-    @staticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
-        package_box_cmd = subp.add_parser("package-box", help="create a Vagrant box")
-        package_box_cmd.add_argument("vm_name", help="VM name")
+    @classmethod
+    def _get_default_package_arguments(cls) -> Dict[str, Optional[str]]:
+        return {"box-engine": "virtualbox", "box-url": None}
+
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
+        def _create_arg(parser: ArgumentParser, name: str, help_text: str, pkg_args: Dict[str, Any]) -> None:
+            kwargs: Dict[str, Any] = {"help": help_text}
+
+            has_default_value = name in pkg_args
+            if has_default_value:
+                kwargs["default"] = pkg_args[name]
+            else:
+                kwargs["required"] = True
+
+            parser.add_argument(f"--{name}", **kwargs)
+
+        pkg_args = cls._get_default_package_arguments()
+        package_box_cmd = subp.add_parser(
+            "package-box", help="create a Vagrant box", formatter_class=ArgumentDefaultsHelpFormatter
+        )
         package_box_cmd.add_argument("box_path", help="box path")
-        package_box_cmd.add_argument("--box-name", required=True, help="box name")
-        package_box_cmd.add_argument("--box-description", required=True, help="box description")
-        package_box_cmd.add_argument("--box-version", required=True, help="box version")
-        package_box_cmd.add_argument("--box-engine", help="box engine (optional)", default="virtualbox")
-        package_box_cmd.add_argument("--box-url", help="box URL (optional)", default=None)
+        _create_arg(package_box_cmd, "vm-name", "VM name", pkg_args)
+        _create_arg(package_box_cmd, "box-name", "box name", pkg_args)
+        _create_arg(package_box_cmd, "box-description", "box description", pkg_args)
+        _create_arg(package_box_cmd, "box-version", "box version", pkg_args)
+        _create_arg(package_box_cmd, "box-engine", "box engine (optional)", pkg_args)
+        _create_arg(package_box_cmd, "box-url", "box URL (optional)", pkg_args)

@@ -49,7 +49,7 @@ class PortForwardCommand(Command):
 
         return SshConfig(hostname=hostname, user=user, port=port, identity_file=identity_file)
 
-    @staticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
         cmd = subp.add_parser("port-forward", help="forward ports")
         cmd.add_argument("port", nargs="+", type=int, help="ports to open")
