@@ -11,7 +11,7 @@ class Command(abc.ABC):
     def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
         """Execute command."""
 
-    @staticmethod
-    @abc.abstractstaticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+    @classmethod
+    @abc.abstractclassmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
         """Add arguments."""

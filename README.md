@@ -22,8 +22,10 @@ It is a small wrapper around `ansible-playbook` to execute roles locally on a Va
 
 You need to setup a shared folder to have access to your roles, and have `ansible` installed.
 Default configuration is to have:
-- As a role path on the host (ansible_role_path_host): "./ansible"
-- As a role path on the guest (ansible_role_path_guest): "/ansible"
+- As role path on the host (`ansible_role_path_host`): `"./ansible"`
+- As role path on the guest (`ansible_role_path_guest`): `"/ansible"`
+- As Ansible library path (`ansible_library`): `"./plugins/modules"`
+- As remote user (remote_user): `"vagrant"`
 
 Here is a sample Vagrantfile (based on an Ubuntu 20.04 box):
 
@@ -45,8 +47,11 @@ vagrant-ansible-provisioner apply my.role
 
 The command-line executable has two commands:
 
-- `apply <role-name> [-e env-name=env-value]`: Apply a role (with optional environment variables)
-- `list`: List roles
+- `apply role [-e ENV ...]`: Apply a role (with optional environment variables)
+- `list`: List available roles (in `ansible_role_path_host` folder)
+- `port-forward port [port ...]`: Utility command to expose one or multiple ports from the guest to the host
+- `package-box --vm-name VM_NAME --box-name BOX_NAME --box-description BOX_DESCRIPTION --box-version BOX_VERSION [--box-engine BOX_ENGINE] [--box-url BOX_URL] box_path`: Build a Vagrant box from one of the declared machines in the Vagrantfile
+- `install-box path`: Install a Vagrant box from a JSON path or URL
 
 ### Ad-hoc use
 

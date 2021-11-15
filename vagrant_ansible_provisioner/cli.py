@@ -1,6 +1,6 @@
 import os
 import sys
-from argparse import ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from typing import List, Optional, Sequence, Type
 
 from vagrant_ansible_provisioner.commands.install_box import InstallBoxCommand
@@ -21,6 +21,10 @@ DEFAULT_COMMANDS: List[Type[Command]] = [
     PackageBoxCommand,
     InstallBoxCommand,
 ]
+
+
+def get_default_commands(without: List[Type[Command]]) -> List[Type[Command]]:
+    return [cmd for cmd in DEFAULT_COMMANDS if cmd not in without]
 
 
 class Cli:
@@ -46,7 +50,7 @@ class Cli:
             command.add_arguments(parser, subp)
 
     def _create_parser(self, commands: List[Type[Command]]) -> ArgumentParser:
-        parser = ArgumentParser(description=self._description())
+        parser = ArgumentParser(description=self._description(), formatter_class=ArgumentDefaultsHelpFormatter)
         self._create_subcommands(parser, commands)
 
         parser.add_argument(

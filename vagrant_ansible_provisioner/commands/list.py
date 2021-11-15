@@ -19,6 +19,6 @@ class ListCommand(Command):
                 print_info(role, prefix=" *")
         return 0
 
-    @staticmethod
-    def add_arguments(parser: ArgumentParser, subp: _SubParsersAction) -> None:
+    @classmethod
+    def add_arguments(cls, parser: ArgumentParser, subp: _SubParsersAction) -> None:
         subp.add_parser("list", help="list Ansible roles")
