@@ -10,7 +10,11 @@ class ListCommand(Command):
     name = "list"
 
     def execute(self, args: Namespace, config: EnvironmentConfig) -> int:
-        roles = list_roles(config.ansible_role_path_host.getv())
+        path = config.ansible_role_path_host.getv()
+        if config.internal.getv():
+            path = config.ansible_role_path_guest.getv()
+
+        roles = list_roles(path)
         if not roles:
             print_warn("No role found.")
         else:
