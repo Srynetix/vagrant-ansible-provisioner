@@ -98,7 +98,7 @@ def using_tmp_envs(env: Dict[str, Any]) -> Generator:
     prev_values = {k: os.environ.get(k) for k in env.keys()}
 
     for k, v in env.items():
-        os.environ[k] = v
+        os.environ[k] = str(v)
 
     yield
 
@@ -106,4 +106,4 @@ def using_tmp_envs(env: Dict[str, Any]) -> Generator:
         if v is None:
             os.environ.pop(k)
         else:
-            os.environ[k] = v
+            os.environ[k] = str(v)

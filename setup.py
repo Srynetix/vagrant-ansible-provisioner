@@ -6,5 +6,5 @@ setup(
         "vagrant_ansible_provisioner",
         "vagrant_ansible_provisioner.commands",
     ],
-    zip_safe=False
+    zip_safe=False,
 )
